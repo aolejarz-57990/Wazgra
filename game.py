@@ -9,6 +9,7 @@ BACKGROUND_COLOR = 'pink'
 SNAKE_HEAD_COLOR = (0, 200, 0)
 SNAKE_TAIL_COLOR = (0, 255, 0)
 APPLE_COLOR = (200, 0, 0)
+BLACK = (0,0,0)
 
 FIELD_SIZE = 50
 
@@ -114,6 +115,9 @@ class Game:
         
         self.clock = pygame.time.Clock()
 
+        self._set_up_game()
+
+    def _set_up_game(self):
         map_width, map_height = self._get_map_size()
 
         self.snake = Snake(
@@ -123,8 +127,8 @@ class Game:
 
         self.apple = self._spawn_apple()
 
-        self.game_over = False
-        
+        self.points = 0
+
     def _get_map_size(self):
         return (
             int(self.window_size[0] / FIELD_SIZE),
@@ -144,12 +148,19 @@ class Game:
         self.apple.draw(self.screen)
         self.snake.draw(self.screen)
 
+        if self.snake.dead: 
+            font = pygame.font.Font(None,30)
+            text_surface = font.render(f"Przegrałeś, twoja liczba punktów to: {self.points}", True, BLACK)
+            self.screen.blit(text_surface, (0,0))
+
     def _update(self):
         self.snake.move(self._get_map_size())
 
         if self.snake.collides(self.apple):
             self.snake.eat()
+            self.points += 1
             self.apple = self._spawn_apple()
+        
 
     def _handle_keyboard_input(self, key):
         if key == pygame.K_w:
@@ -160,6 +171,8 @@ class Game:
             self.snake.direction = 'LEFT'
         elif key == pygame.K_d:
             self.snake.direction = 'RIGHT'
+        elif key == pygame.K_r:
+            self._set_up_game()
 
     def start_loop(self):
         while True:
