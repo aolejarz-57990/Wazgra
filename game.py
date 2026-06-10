@@ -163,15 +163,19 @@ class Game:
         
 
     def _handle_keyboard_input(self, key):
-        if key == pygame.K_w:
+        if key == pygame.K_w and self.snake.direction != 'DOWN':
             self.snake.direction = 'UP'
-        elif key == pygame.K_s:
+
+        elif key == pygame.K_s and self.snake.direction != 'UP':
             self.snake.direction = 'DOWN'
-        elif key == pygame.K_a:
+
+        elif key == pygame.K_a and self.snake.direction != 'RIGHT':
             self.snake.direction = 'LEFT'
-        elif key == pygame.K_d:
+
+        elif key == pygame.K_d and self.snake.direction != 'LEFT':
             self.snake.direction = 'RIGHT'
-        elif key == pygame.K_r:
+
+        elif key == pygame.K_r and self.snake.dead:
             self._set_up_game()
 
     def start_loop(self):
