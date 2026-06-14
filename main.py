@@ -2,7 +2,7 @@ import pygame
 
 from game import Game
 
-WINDOW_SIZE = (800, 800)
+WINDOW_SIZE = (1000, 800)
 FPS = 4
 
 pygame.init()

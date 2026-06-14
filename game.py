@@ -2,13 +2,14 @@ import pygame
 from random import randint
 from gameobject.snake import Snake
 from gameobject.apple import Apple
-from settings import RECORD_FILE_NAME, BACKGROUND_COLOR, BLACK, FIELD_SIZE
+from settings import RECORD_FILE_NAME, BACKGROUND_COLOR, BLACK, MAP_SIZE
 
 
 class Game:
     def __init__(self, window_size: tuple[int, int], fps: int):
         self.window_size = window_size
         self.fps = fps
+        self.field_size = min(window_size) / MAP_SIZE 
 
         self.screen = pygame.display.set_mode(window_size)
         pygame.display.set_caption('Snake')
@@ -17,14 +18,14 @@ class Game:
 
         self._set_up_game()
         self.record = self._get_record()
+    
 
     def _set_up_game(self):
-        map_width, map_height = self._get_map_size()
 
         self.snake1 = Snake(3, 3)
         self.snake1.direction = 'RIGHT'
 
-        self.snake2 = Snake(map_width - 4, map_height - 4)
+        self.snake2 = Snake(MAP_SIZE - 4, MAP_SIZE - 4)
         self.snake2.direction = 'LEFT'
 
         self.apple = self._spawn_apple()
@@ -41,25 +42,18 @@ class Game:
     def _get_points(self, snake):
         return len(snake.tail)
 
-    def _get_map_size(self):
-        return (
-            int(self.window_size[0] / FIELD_SIZE),
-            int(self.window_size[1] / FIELD_SIZE)
-        )
-
     def _spawn_apple(self):
-        map_width, map_height = self._get_map_size()
 
-        x = randint(0, map_width - 1)
-        y = randint(0, map_height - 1)
+        x = randint(0, MAP_SIZE - 1)
+        y = randint(0, MAP_SIZE - 1)
 
         return Apple(x, y)
 
     def _frame(self):
         self.screen.fill(BACKGROUND_COLOR)
-        self.apple.draw(self.screen)
-        self.snake1.draw(self.screen)
-        self.snake2.draw(self.screen)
+        self.apple.draw(self.screen, self.field_size)
+        self.snake1.draw(self.screen, self.field_size)
+        self.snake2.draw(self.screen, self.field_size)
 
         font = pygame.font.Font(None,30)
         if self._all_snakes_dead():
@@ -82,7 +76,7 @@ class Game:
     
     def _update_snake(self, snake):
         if not snake.dead:
-            snake.move(self._get_map_size())
+            snake.move()
         
         if snake.collides(self.apple):
             snake.eat()
